@@ -1,0 +1,57 @@
+{
+  "policy_id": "FEDRAMP-KSI-AM-002",
+  "title": "Least Privilege and Role-Based Access Enforcement",
+  "description": "Ensure permissions are constrained to documented job responsibilities using role-based grants.",
+  "version": "1.0.0",
+  "status": "active",
+  "framework": {
+    "name": "FedRAMP",
+    "artifact": "KSI",
+    "baseline": "Moderate",
+    "control_family": "Access Control"
+  },
+  "domain": "Access Management",
+  "control_mappings": [
+    { "control_id": "AC-6", "control_name": "Least Privilege" },
+    { "control_id": "AC-3", "control_name": "Access Enforcement" }
+  ],
+  "policy_logic": {
+    "effect": "require",
+    "conditions": [
+      {
+        "id": "c1",
+        "expression": "grants.all(permission in approved_role_catalog)",
+        "severity": "high"
+      },
+      {
+        "id": "c2",
+        "expression": "standing_admin_access.users.count == 0",
+        "severity": "critical"
+      },
+      {
+        "id": "c3",
+        "expression": "toxic_permission_combinations.count == 0",
+        "severity": "high"
+      }
+    ],
+    "actions": [
+      {
+        "type": "revoke_grant",
+        "description": "Remove any direct grant that is outside approved role definitions.",
+        "automation_target": "iam"
+      },
+      {
+        "type": "require_jit",
+        "description": "Require just-in-time elevation for privileged commands.",
+        "automation_target": "pam"
+      }
+    ]
+  },
+  "evidence_requirements": [
+    "Role catalog and owner approvals",
+    "Privilege escalation request records",
+    "Separation-of-duties conflict scans"
+  ],
+  "review_cadence": "monthly",
+  "owners": ["IAM Team", "Governance Risk and Compliance"]
+}

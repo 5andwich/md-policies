@@ -1,0 +1,57 @@
+{
+  "policy_id": "FEDRAMP-KSI-AM-001",
+  "title": "Identity and Account Lifecycle Management",
+  "description": "Require centralized provisioning, approval, and deprovisioning for all workforce and non-person accounts.",
+  "version": "1.0.0",
+  "status": "active",
+  "framework": {
+    "name": "FedRAMP",
+    "artifact": "KSI",
+    "baseline": "Moderate",
+    "control_family": "Access Control"
+  },
+  "domain": "Access Management",
+  "control_mappings": [
+    { "control_id": "AC-2", "control_name": "Account Management" },
+    { "control_id": "IA-4", "control_name": "Identifier Management" }
+  ],
+  "policy_logic": {
+    "effect": "require",
+    "conditions": [
+      {
+        "id": "c1",
+        "expression": "all_accounts.provisioning_source == 'approved_ticket'",
+        "severity": "high"
+      },
+      {
+        "id": "c2",
+        "expression": "terminated_users.deprovision_time_hours <= 24",
+        "severity": "critical"
+      },
+      {
+        "id": "c3",
+        "expression": "orphaned_accounts.count == 0",
+        "severity": "high"
+      }
+    ],
+    "actions": [
+      {
+        "type": "disable_account",
+        "description": "Disable accounts that do not have a valid owner or approved request.",
+        "automation_target": "iam"
+      },
+      {
+        "type": "create_incident",
+        "description": "Open security incident for any account not deprovisioned in SLA.",
+        "automation_target": "siem"
+      }
+    ]
+  },
+  "evidence_requirements": [
+    "Joiner/mover/leaver workflow exports",
+    "IAM account inventory with owner metadata",
+    "Deprovisioning SLA report"
+  ],
+  "review_cadence": "monthly",
+  "owners": ["IAM Team", "Security Operations"]
+}

@@ -1,0 +1,58 @@
+{
+  "policy_id": "FEDRAMP-KSI-AM-005",
+  "title": "Periodic Access Certification",
+  "description": "Require recurring manager and system-owner certification of user and service-account access.",
+  "version": "1.0.0",
+  "status": "active",
+  "framework": {
+    "name": "FedRAMP",
+    "artifact": "KSI",
+    "baseline": "Moderate",
+    "control_family": "Access Control"
+  },
+  "domain": "Access Management",
+  "control_mappings": [
+    { "control_id": "AC-2(7)", "control_name": "Role-Based Schemes" },
+    { "control_id": "AC-2(12)", "control_name": "Account Monitoring for Atypical Usage" },
+    { "control_id": "CA-7", "control_name": "Continuous Monitoring" }
+  ],
+  "policy_logic": {
+    "effect": "require",
+    "conditions": [
+      {
+        "id": "c1",
+        "expression": "certifications.completed_within_days <= 35",
+        "severity": "high"
+      },
+      {
+        "id": "c2",
+        "expression": "recertification_violations.open_count == 0",
+        "severity": "high"
+      },
+      {
+        "id": "c3",
+        "expression": "service_accounts.with_documented_owner_ratio == 1",
+        "severity": "critical"
+      }
+    ],
+    "actions": [
+      {
+        "type": "suspend_access",
+        "description": "Suspend access when a certification campaign is overdue.",
+        "automation_target": "iam"
+      },
+      {
+        "type": "notify_owner",
+        "description": "Notify managers and system owners of outstanding attestations.",
+        "automation_target": "ticketing"
+      }
+    ]
+  },
+  "evidence_requirements": [
+    "Quarterly/Monthly access certification reports",
+    "Manager attestation decisions",
+    "Remediation and revoke logs"
+  ],
+  "review_cadence": "quarterly",
+  "owners": ["GRC", "IAM Team"]
+}
