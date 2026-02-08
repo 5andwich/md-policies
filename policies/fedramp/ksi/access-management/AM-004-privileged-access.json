@@ -1,0 +1,58 @@
+{
+  "policy_id": "FEDRAMP-KSI-AM-004",
+  "title": "Privileged Access Management and Session Control",
+  "description": "Require controlled elevation, session recording, and command accountability for privileged operations.",
+  "version": "1.0.0",
+  "status": "active",
+  "framework": {
+    "name": "FedRAMP",
+    "artifact": "KSI",
+    "baseline": "Moderate",
+    "control_family": "Access Control"
+  },
+  "domain": "Access Management",
+  "control_mappings": [
+    { "control_id": "AC-5", "control_name": "Separation of Duties" },
+    { "control_id": "AC-6(10)", "control_name": "Prohibit Non-Privileged Users from Executing Privileged Functions" },
+    { "control_id": "AU-12", "control_name": "Audit Generation" }
+  ],
+  "policy_logic": {
+    "effect": "require",
+    "conditions": [
+      {
+        "id": "c1",
+        "expression": "privileged_sessions.just_in_time == true",
+        "severity": "critical"
+      },
+      {
+        "id": "c2",
+        "expression": "privileged_sessions.recording_coverage_ratio == 1",
+        "severity": "high"
+      },
+      {
+        "id": "c3",
+        "expression": "shared_admin_accounts.count == 0",
+        "severity": "high"
+      }
+    ],
+    "actions": [
+      {
+        "type": "terminate_session",
+        "description": "Terminate privileged sessions that do not have an approved elevation token.",
+        "automation_target": "pam"
+      },
+      {
+        "type": "ship_audit_events",
+        "description": "Forward privileged command telemetry to SIEM in near real-time.",
+        "automation_target": "siem"
+      }
+    ]
+  },
+  "evidence_requirements": [
+    "Privileged elevation request logs",
+    "Session recording inventory",
+    "Admin account assignment roster"
+  ],
+  "review_cadence": "monthly",
+  "owners": ["Platform Security", "Security Operations"]
+}

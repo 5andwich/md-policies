@@ -1,0 +1,41 @@
+{
+  "policy_set_id": "FEDRAMP-KSI-ACCESS-MANAGEMENT",
+  "title": "FedRAMP KSI Access Management Policy Set",
+  "version": "1.0.0",
+  "schema": "../../../schema/policy.schema.json",
+  "scalability": {
+    "design": "control-family-first",
+    "notes": [
+      "Each policy is a standalone JSON document that can be validated with the shared schema.",
+      "Additional control families can be added by reusing the same structure under policies/fedramp/ksi/<control-family>/.",
+      "Control mappings support many-to-many relationships so one policy can satisfy multiple controls."
+    ]
+  },
+  "policies": [
+    {
+      "policy_id": "FEDRAMP-KSI-AM-001",
+      "file": "AM-001-account-lifecycle.json",
+      "primary_controls": ["AC-2", "IA-4"]
+    },
+    {
+      "policy_id": "FEDRAMP-KSI-AM-002",
+      "file": "AM-002-least-privilege.json",
+      "primary_controls": ["AC-6", "AC-3"]
+    },
+    {
+      "policy_id": "FEDRAMP-KSI-AM-003",
+      "file": "AM-003-mfa.json",
+      "primary_controls": ["IA-2", "IA-2(1)", "IA-2(2)"]
+    },
+    {
+      "policy_id": "FEDRAMP-KSI-AM-004",
+      "file": "AM-004-privileged-access.json",
+      "primary_controls": ["AC-5", "AC-6(10)", "AU-12"]
+    },
+    {
+      "policy_id": "FEDRAMP-KSI-AM-005",
+      "file": "AM-005-access-reviews.json",
+      "primary_controls": ["AC-2(7)", "AC-2(12)", "CA-7"]
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "policy_id": "FEDRAMP-KSI-AM-003",
+  "title": "Multi-Factor Authentication Coverage",
+  "description": "Require phishing-resistant MFA for workforce, privileged, and remote access scenarios.",
+  "version": "1.0.0",
+  "status": "active",
+  "framework": {
+    "name": "FedRAMP",
+    "artifact": "KSI",
+    "baseline": "Moderate",
+    "control_family": "Identification and Authentication"
+  },
+  "domain": "Access Management",
+  "control_mappings": [
+    { "control_id": "IA-2", "control_name": "Identification and Authentication (Organizational Users)" },
+    { "control_id": "IA-2(1)", "control_name": "Network Access to Privileged Accounts" },
+    { "control_id": "IA-2(2)", "control_name": "Network Access to Non-Privileged Accounts" }
+  ],
+  "policy_logic": {
+    "effect": "require",
+    "conditions": [
+      {
+        "id": "c1",
+        "expression": "interactive_logins.mfa_success_rate >= 0.99",
+        "severity": "critical"
+      },
+      {
+        "id": "c2",
+        "expression": "privileged_accounts.with_phishing_resistant_mfa_ratio == 1",
+        "severity": "critical"
+      },
+      {
+        "id": "c3",
+        "expression": "mfa_bypass_exceptions.active_days <= 14",
+        "severity": "high"
+      }
+    ],
+    "actions": [
+      {
+        "type": "block_authentication",
+        "description": "Block authentication attempts that do not satisfy MFA policy.",
+        "automation_target": "idp"
+      },
+      {
+        "type": "expire_exception",
+        "description": "Automatically expire emergency MFA exceptions after approved window.",
+        "automation_target": "idp"
+      }
+    ]
+  },
+  "evidence_requirements": [
+    "Identity provider MFA configuration export",
+    "Authentication logs for privileged and remote sessions",
+    "MFA exception approvals and expiration records"
+  ],
+  "review_cadence": "weekly",
+  "owners": ["Identity Engineering", "Security Operations"]
+}
